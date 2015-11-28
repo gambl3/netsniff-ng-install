@@ -98,11 +98,16 @@ fi
 
 function install_netsniff-ng() {
 local ORDER=$1
+local BUILDDIR="/usr/local/netsniff-ng"
 echo -e "$ORDER Installing from source!\n"
 cd $DIR
-if git clone https://github.com/netsniff-ng/netsniff-ng.git /usr/local/netsniff-ng
+if git clone https://github.com/netsniff-ng/netsniff-ng.git $BUILDDIR
 then
-        cd netsniff-ng
+        cd $BUILDDIR
+        # Modifiy configure script to use libsodium rather than NaCl
+        sed -i 's:\/usr\/include\/nacl:\/usr\/include\/sodium:g' $BUILDDIR
+   	sed -i 's:\/usr\/lib:\/usr\/lib64\/:g' $BUILDDIR
+   	sed -i 's:\/usr\"nacl\":\"sodium\":g' $BUILDDIR
 	./configure 2>&1 > /dev/null
 	# Uncomment next 4 lines to build library for curvetun, then add "curvetun" and curvetun_install to make line.
 	# make nacl
@@ -110,9 +115,7 @@ then
 	# export NACL_LIB_DIR=/root/nacl/$nacl_version/build/$shorthostname/lib/$arch
 	# export NACL_INC_DIR=/root/nacl/$nacl_version/build/$shorthostname/include/$arch
 	export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
-	# Modifiy configure script to use sodium rather than NaCl
-   sed 's:\/usr\/include\/nacl:\/usr\/include\/sodium:g' /usr/local/netsniff-ng/configure
-  ./configure && make ifpps trafgen bpfc flowtop mausezahn astraceroute && make ifpps_install trafgen_install bpfc_install flowtop_install mausezahn_install astraceroute_install
+	./configure && make ifpps trafgen bpfc flowtop mausezahn astraceroute && make ifpps_install trafgen_install bpfc_install flowtop_install mausezahn_install astraceroute_install
 
 	if [ $? -eq 0 ]; then
 		hi "Netsniff-NG successfully installed!"
