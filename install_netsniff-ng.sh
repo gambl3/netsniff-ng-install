@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # Testing on CentOS 6.7
-# Cannot install trafgen because lack of TPACKET_V3 support in kernel, a problem with EL systems)
-# Installs: ifpps bpfc flowtop mausezahn astraceroute *netsniff-ng PCAP tool already has a RPM
+# Cannot install trafgen or astraceroute. ring.h kicks an undeclared variable 
+# I suspect this is due to the lack of TPACKET_V3 support in kernel, a problem with EL systems
+# Need to contact devs for this issue.
+# Installs: ifpps bpfc flowtop mausezahn *netsniff-ng PCAP tool already has a RPM
 
 DESIRED_TOOLKIT_VERSION="$1" # e.g. ./install_netsniff-ng.sh "0.5.9-rc2+"
 DIR=/root
@@ -114,7 +116,7 @@ then
 	sed -i 's:return \"caif\"\;:return \"caif\"\;\*\/:g' $BUILDDIR/dev.c
 	./configure 2>&1 > /dev/null
 	export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
-	./configure && make ifpps bpfc flowtop mausezahn astraceroute && make ifpps_install bpfc_install flowtop_install mausezahn_install astraceroute_install
+	./configure && make ifpps bpfc flowtop mausezahn && make ifpps_install bpfc_install flowtop_install mausezahn_install
 
 	if [ $? -eq 0 ]; then
 		hi "Netsniff-NG successfully installed!"
