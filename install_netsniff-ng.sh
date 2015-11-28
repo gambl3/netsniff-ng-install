@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
-# Tested on CentOS
-# Cannot install Netsniff-NG because lack of TPACKET_V3 support in kernel, a problem with EL systems)
-# Installs: ifpps trafgen bpfc flowtop mausezahn astraceroute
-# Optional: To build curvetun uncomment NaCL lines in install_nestniff-ng function and add to make line
+# Testing on CentOS 6.7
+# Cannot install trafgen because lack of TPACKET_V3 support in kernel, a problem with EL systems)
+# Installs: ifpps bpfc flowtop mausezahn astraceroute *netsniff-ng PCAP tool already has a RPM
 
 DESIRED_TOOLKIT_VERSION="$1" # e.g. ./install_netsniff-ng.sh "0.5.9-rc2+"
 DIR=/root
@@ -104,18 +103,18 @@ cd $DIR
 if git clone https://github.com/netsniff-ng/netsniff-ng.git $BUILDDIR
 then
         cd $BUILDDIR
-        # Modifiy configure script to use libsodium rather than NaCl
+        #Modifiy configure script to use libsodium rather than NaCl
         sed -i 's:\/usr\/include\/nacl:\/usr\/include\/sodium:g' $BUILDDIR
    	sed -i 's:\/usr\/lib:\/usr\/lib64\/:g' $BUILDDIR
    	sed -i 's:\/usr\"nacl\":\"sodium\":g' $BUILDDIR
+	#CentOS 6.7 did not like the "case ARPHD_CAIF" statement in dev.c 
+	#my c skills are weak so I'm commenting that line out... not sure of other solutions
+	#CAIF https://www.kernel.org/doc/Documentation/networking/caif/Linux-CAIF.txt
+	sed -i 's;case\ ARPHRD\_CAIF\:;\/\*case\ ARPHRD\_CAIF\:;g'  $BUILDDIR/dev.c 
+	sed -i 's:return \"caif\"\;:return \"caif\"\;\*\/:g' $BUILDDIR/dev.c
 	./configure 2>&1 > /dev/null
-	# Uncomment next 4 lines to build library for curvetun, then add "curvetun" and curvetun_install to make line.
-	# make nacl
-	# source <(grep '=' curvetun/nacl_build.sh | sed 's/abiname/curvetun\/abiname/')
-	# export NACL_LIB_DIR=/root/nacl/$nacl_version/build/$shorthostname/lib/$arch
-	# export NACL_INC_DIR=/root/nacl/$nacl_version/build/$shorthostname/include/$arch
 	export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
-	./configure && make ifpps trafgen bpfc flowtop mausezahn astraceroute && make ifpps_install trafgen_install bpfc_install flowtop_install mausezahn_install astraceroute_install
+	./configure && make ifpps bpfc flowtop mausezahn astraceroute && make ifpps_install bpfc_install flowtop_install mausezahn_install astraceroute_install
 
 	if [ $? -eq 0 ]; then
 		hi "Netsniff-NG successfully installed!"
