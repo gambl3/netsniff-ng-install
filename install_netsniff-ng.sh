@@ -85,7 +85,8 @@ fi
 yum install -y wget git ccache flex bison GeoIP-devel \
 	 libnetfilter_conntrack-devel ncurses-devel \
 	 userspace-rcu-devel libpcap-devel zlib-devel \
-	 libnet-devel gnuplot cpp
+	 libnet-devel gnuplot cpp libsodium libsodium-devel \
+	 libnl3 libnl3-devel libnl3-cli
 echo
 if [ ! -f /usr/lib64/libcli.so.1.8.6 ]; then
 	rpm -ivh http://pkgs.repoforge.org/libcli/libcli-1.8.6-2.el6.rf.x86_64.rpm && hi "Installed libcli!" || die "Failed to install libcli"
@@ -93,19 +94,13 @@ fi
 if [ ! -f /usr/include/libcli.h ]; then
 	rpm -ivh http://pkgs.repoforge.org/libcli/libcli-devel-1.8.6-2.el6.rf.x86_64.rpm && hi "Installed libcli-devel!" || die "Failed to install libcli-devel"
 fi
-if [ ! -d /usr/local/lib/libnl ]; then
-	wget http://www.infradead.org/~tgr/libnl/files/libnl-3.2.25.tar.gz
-	tar zxf libnl-3.2.25.tar.gz
-	cd libnl-3.2.25
-	./configure && make && make install && hi "Installed libnl-3.2.25" || die "Failed to install libnl-3.2.25"
-fi
 }
 
 function install_netsniff-ng() {
 local ORDER=$1
 echo -e "$ORDER Installing from source!\n"
 cd $DIR
-if git clone https://github.com/netsniff-ng/netsniff-ng.git
+if git clone https://github.com/netsniff-ng/netsniff-ng.git /usr/local/netsniff-ng
 then
         cd netsniff-ng
 	./configure 2>&1 > /dev/null
@@ -115,6 +110,8 @@ then
 	# export NACL_LIB_DIR=/root/nacl/$nacl_version/build/$shorthostname/lib/$arch
 	# export NACL_INC_DIR=/root/nacl/$nacl_version/build/$shorthostname/include/$arch
 	export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
+	# Modifiy configure script to use sodium rather than NaCl
+   sed 's:\/usr\/include\/nacl:\/usr\/include\/sodium:g' /usr/local/netsniff-ng/configure
   ./configure && make ifpps trafgen bpfc flowtop mausezahn astraceroute && make ifpps_install trafgen_install bpfc_install flowtop_install mausezahn_install astraceroute_install
 
 	if [ $? -eq 0 ]; then
