@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Testing on CentOS 6.7
+# Tested successfully on CentOS 6.7 as of   28 November 15 -gambl3
 # Cannot install trafgen or astraceroute. ring.h kicks an undeclared variable 
 # I suspect this is due to the lack of TPACKET_V3 support in kernel, a problem with EL systems
 # Need to contact devs for this issue.
