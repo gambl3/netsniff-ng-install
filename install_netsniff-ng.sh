@@ -8,37 +8,10 @@
 DESIRED_TOOLKIT_VERSION="$1" # e.g. ./install_netsniff-ng.sh "0.5.9-rc2+"
 DIR=/root
 HOST=$(hostname -s)
-IRCSAY=/usr/local/bin/ircsay
-COWSAY=$(which cowsay 2>/dev/null)
 LOGFILE=netsniff-ng-install.log
 
 exec > >(tee -a "$LOGFILE") 2>&1
 echo -e "\n --> Logging stdout & stderr to $LOGFILE"
-
-function die {
-    if [ -f ${COWSAY:-none} ]; then
-	$COWSAY -d "$*"
-    else
-    	echo "$*"
-    fi
-    if [ -f $IRCSAY ]; then
-    	( set +e; $IRCSAY "#company-channel" "$*" 2>/dev/null || true )
-    fi
-    # echo "$*" | mail -s "Netsniff-NG install information on $HOST" user@company.com
-    exit 1
-}
-
-function hi {
-    if [ -f ${COWSAY:-none} ]; then
-	$COWSAY "$*"
-    else
-    	echo "$*"
-    fi
-    if [ -f $IRCSAY ]; then
-    	( set +e; $IRCSAY "#company-channel" "$*" 2>/dev/null || true )
-    fi
-    # echo "$*" | mail -s "Netsniff-NG install information on $HOST" user@company.com
-}
 
 function cleanup() {
 local ORDER=$1
@@ -101,7 +74,6 @@ function install_netsniff-ng() {
 local ORDER=$1
 local BUILDDIR="/usr/local/netsniff-ng"
 echo -e "$ORDER Installing from source!\n"
-cd $DIR
 if git clone https://github.com/netsniff-ng/netsniff-ng.git $BUILDDIR
 then
         cd $BUILDDIR
@@ -119,12 +91,12 @@ then
 	./configure && make ifpps bpfc flowtop mausezahn && make ifpps_install bpfc_install flowtop_install mausezahn_install
 
 	if [ $? -eq 0 ]; then
-		hi "Netsniff-NG successfully installed!"
+		echo "Netsniff-NG successfully installed!"
 	else
-		die "Netsniff-NG tools failed to install"
+		echo "Netsniff-NG tools failed to install"
 	fi
 else
-	die "Netsniff-NG download failed"
+	echo "Netsniff-NG download failed"
 fi
 }
 
