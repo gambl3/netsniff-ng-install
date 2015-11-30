@@ -53,7 +53,7 @@ function install_dependencies()
 local ORDER=$1
 echo -e "$ORDER Checking for dependencies!\n"
 if [ ! -f /etc/yum.repos.d/epel.repo ]; then
-	rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm && hi "Installed EPEL repo!" || die "Failed to install EPEL"
+	rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm && echo "Installed EPEL repo!" || echo "Failed to install EPEL"
 fi
 
 yum install -y wget git ccache flex bison GeoIP-devel \
@@ -63,10 +63,10 @@ yum install -y wget git ccache flex bison GeoIP-devel \
 	 libnl3 libnl3-devel libnl3-cli
 echo
 if [ ! -f /usr/lib64/libcli.so.1.8.6 ]; then
-	rpm -ivh http://pkgs.repoforge.org/libcli/libcli-1.8.6-2.el6.rf.x86_64.rpm && hi "Installed libcli!" || die "Failed to install libcli"
+	rpm -ivh http://pkgs.repoforge.org/libcli/libcli-1.8.6-2.el6.rf.x86_64.rpm && echo "Installed libcli!" || echo "Failed to install libcli"
 fi
 if [ ! -f /usr/include/libcli.h ]; then
-	rpm -ivh http://pkgs.repoforge.org/libcli/libcli-devel-1.8.6-2.el6.rf.x86_64.rpm && hi "Installed libcli-devel!" || die "Failed to install libcli-devel"
+	rpm -ivh http://pkgs.repoforge.org/libcli/libcli-devel-1.8.6-2.el6.rf.x86_64.rpm && echo "Installed libcli-devel!" || echo "Failed to install libcli-devel"
 fi
 }
 
