@@ -18,17 +18,15 @@ local ORDER=$1
 echo "$ORDER Cleaning up any messes!"
 cd $DIR
 if [ -f libcli-1.8.6-2.el6.rf.x86_64.rpm ]; then
-        rm -fr libcli-1.8.6-2.el6.rf.x86_64.rpm
+        rm -rf libcli-1.8.6-2.el6.rf.x86_64.rpm
 fi
 
 if [ -f libcli-devel-1.8.6-2.el6.rf.x86_64.rpm ]; then
-        rm -fr libcli-devel-1.8.6-2.el6.rf.x86_64.rpm
+        rm -rf libcli-devel-1.8.6-2.el6.rf.x86_64.rpm
 fi
 if [ -f epel-release-6-8.noarch.rpm ]; then
-        rm -fr epel-release-6-8.noarch.rpm
+        rm -rf epel-release-6-8.noarch.rpm
 fi
-rm -rf nacl*
-rm -rf libnl-3.2.25*
 if [ -d netsniff-ng ]; then
         rm -fr netsniff-ng
 fi
