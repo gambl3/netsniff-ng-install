@@ -82,8 +82,8 @@ then
    	sed -i 's:\/usr\/lib:\/usr\/lib64\/:g' $BUILDDIR
    	sed -i 's:\/usr\"nacl\":\"sodium\":g' $BUILDDIR
 	#CentOS 6.7 did not like the "case ARPHD_CAIF" statement in dev.c 
-	#my c skills are weak so I'm commenting that line out... not sure of other solutions
-	#CAIF https://www.kernel.org/doc/Documentation/networking/caif/Linux-CAIF.txt
+	#The include for if_arp.h is broken becase EL6 does does not contain a CAIF definition in if_arp.h
+	#For simplicity I am commenting out the CAIF case statement
 	sed -i 's;case\ ARPHRD\_CAIF\:;\/\*case\ ARPHRD\_CAIF\:;g'  $BUILDDIR/dev.c 
 	sed -i 's:return \"caif\"\;:return \"caif\"\;\*\/:g' $BUILDDIR/dev.c
 	./configure 2>&1 > /dev/null
